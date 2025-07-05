@@ -7,7 +7,7 @@ ClassCast is a web-based system designed to automate lecture attendance tracking
 ## 🌐 Live Preview
 
 > *(If deployed, add your live site link here)*  
-> https://your-username.github.io/classcast
+> [https://your-username.github.io/classcast](http://127.0.0.1:5500/)
 
 ---
 
@@ -34,4 +34,9 @@ ClassCast is a web-based system designed to automate lecture attendance tracking
 ---
 
 ## 📁 Project Structure
+ClassCast/
+├── index.html # Main HTML file
+├── styles.css # Custom styles
+├── script.js # JavaScript functionality
+├── README.md # This file
 
