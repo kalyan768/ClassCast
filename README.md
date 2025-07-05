@@ -32,6 +32,15 @@ ClassCast is a web-based system designed to automate lecture attendance tracking
   Simulates QR-based check-in system for marking attendance.
 
 ---
+## 🚀 Technologies Used
+
+- **HTML5** – Structure and layout
+- **CSS3 & Bootstrap 5** – Styling and responsive design
+- **JavaScript (ES6)** – Dynamic functionality, DOM manipulation
+- **Font Awesome** – Beautiful icons
+- **Chart.js** – Attendance & report visualizations (pie chart, bar graph)
+- **GitHub Pages** – Live deployment of the site
+
 
 ## 📁 Project Structure
 ClassCast/
