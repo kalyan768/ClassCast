@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClassCast - Automated Lecture Attendance & Catch-Up System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <div class="header">
+            <div class="logo">
+                <i class="fas fa-graduation-cap"></i>
+                <h1>ClassCast</h1>
+            </div>
+            <p class="subtitle">Automated Lecture Attendance & Catch-Up System</p>
+            <div class="nav-tabs">
+                <button class="nav-tab active" onclick="showSection('dashboard')">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </button>
+                <button class="nav-tab" onclick="showSection('attendance')">
+                    <i class="fas fa-calendar-check"></i> Attendance
+                </button>
+                <button class="nav-tab" onclick="showSection('lectures')">
+                    <i class="fas fa-video"></i> Lectures
+                </button>
+                <button class="nav-tab" onclick="showSection('profile')">
+                    <i class="fas fa-user"></i> Profile
+                </button>
+                <button class="nav-tab" onclick="showSection('admin')">
+                    <i class="fas fa-cog"></i> Admin
+                </button>
+            </div>
+        </div>
+
+
+        <div id="dashboard" class="content-section active">
+            <h2><i class="fas fa-tachometer-alt"></i> Dashboard Overview</h2>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-percentage"></i>
+                    </div>
+                    <div class="stat-value" id="overallAttendance">85%</div>
+                    <div class="stat-label">Overall Attendance</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-week"></i>
+                    </div>
+                    <div class="stat-value" id="weeklyClasses">12</div>
+                    <div class="stat-label">Classes This Week</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="stat-value" id="missedLectures">3</div>
+                    <div class="stat-label">Missed Lectures</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-play-circle"></i>
+                    </div>
+                    <div class="stat-value" id="catchupSessions">7</div>
+                    <div class="stat-label">Catch-Up Sessions</div>
+                </div>
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-qrcode"></i>
+                        </div>
+                        <div>
+                            <h3>Quick Check-In</h3>
+                            <p>Scan QR code to mark attendance</p>
+                        </div>
+                    </div>
+                    <div class="qr-scanner" id="qrScanner">
+                        <div class="scanner-placeholder">
+                            <i class="fas fa-camera"></i>
+                            <p>Click to activate camera</p>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="startQRScanner()">
+                        <i class="fas fa-camera"></i> Start Scanner
+                    </button>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div>
+                            <h3>Attendance Progress</h3>
+                            <p>Your attendance this semester</p>
+                        </div>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 85%"></div>
+                        </div>
+                        <span class="progress-text">85% - Good standing</span>
+                    </div>
+                    <button class="btn btn-primary" onclick="showSection('attendance')">
+                        <i class="fas fa-chart-bar"></i> View Details
+                    </button>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-play-circle"></i>
+                        </div>
+                        <div>
+                            <h3>Recent Lectures</h3>
+                            <p>Catch up on missed content</p>
+                        </div>
+                    </div>
+                    <div id="recentLectures">
+           
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div id="attendance" class="content-section">
+            <h2><i class="fas fa-calendar-check"></i> Attendance Management</h2>
+            
+            <div class="filters-section">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="courseFilter">Filter by Course:</label>
+                        <select id="courseFilter" class="form-control" onchange="filterAttendance()">
+                            <option value="">All Courses</option>
+                            <option value="CS101">Computer Science 101</option>
+                            <option value="MATH201">Mathematics 201</option>
+                            <option value="PHYS101">Physics 101</option>
+                            <option value="ENG102">English 102</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="dateFilter">Filter by Date:</label>
+                        <input type="date" id="dateFilter" class="form-control" onchange="filterAttendance()">
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="attendance-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Course</th>
+                            <th>Lecture</th>
+                            <th>Status</th>
+                            <th>Check-in Time</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="attendanceTableBody">
+      
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+        <div id="lectures" class="content-section">
+            <h2><i class="fas fa-video"></i> Lecture Library</h2>
+            
+            <div class="search-section">
+                <div class="row">
+                    <div class="col-md-8">
+                        <input type="text" id="lectureSearch" class="form-control" 
+                               placeholder="Search by title or course..." onkeyup="searchLectures()">
+                    </div>
+                    <div class="col-md-4">
+                        <select id="lectureFilter" class="form-control" onchange="filterLectures()">
+                            <option value="">All Subjects</option>
+                            <option value="CS">Computer Science</option>
+                            <option value="MATH">Mathematics</option>
+                            <option value="PHYS">Physics</option>
+                            <option value="ENG">English</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div id="lecturesList">
+      
+            </div>
+        </div>>
+        <div id="profile" class="content-section">
+            <h2><i class="fas fa-user"></i> Student Profile</h2>
+            
+            <div class="dashboard-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div>
+                            <h3>Personal Information</h3>
+                        </div>
+                    </div>
+                    <form id="profileForm">
+                        <div class="form-group">
+                            <label for="studentName">Full Name:</label>
+                            <input type="text" id="studentName" class="form-control" value="John Doe" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="studentId">Student ID:</label>
+                            <input type="text" id="studentId" class="form-control" value="STU001" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="studentEmail">Email:</label>
+                            <input type="email" id="studentEmail" class="form-control" value="john.doe@university.edu" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="studentPhone">Phone:</label>
+                            <input type="tel" id="studentPhone" class="form-control" value="+1234567890">
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Update Profile
+                        </button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-cog"></i>
+                        </div>
+                        <div>
+                            <h3>Settings</h3>
+                        </div>
+                    </div>
+                    <form id="settingsForm">
+                        <div class="form-group">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="notificationsEnabled" checked>
+                                <label class="form-check-label" for="notificationsEnabled">
+                                    Enable Notifications
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="autoCheckIn">
+                                <label class="form-check-label" for="autoCheckIn">
+                                    Auto Check-in (GPS based)
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="reminderTime">Reminder Time:</label>
+                            <select id="reminderTime" class="form-control">
+                                <option value="5">5 minutes before</option>
+                                <option value="10" selected>10 minutes before</option>
+                                <option value="15">15 minutes before</option>
+                                <option value="30">30 minutes before</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Save Settings
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+        <div id="admin" class="content-section">
+            <h2><i class="fas fa-cog"></i> Admin Panel</h2>
+            
+            <div class="dashboard-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-plus"></i>
+                        </div>
+                        <div>
+                            <h3>Add New Lecture</h3>
+                        </div>
+                    </div>
+                    <form id="addLectureForm">
+                        <div class="form-group">
+                            <label for="lectureTitle">Lecture Title:</label>
+                            <input type="text" id="lectureTitle" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lectureCourse">Course:</label>
+                            <select id="lectureCourse" class="form-control" required>
+                                <option value="">Select Course</option>
+                                <option value="CS101">Computer Science 101</option>
+                                <option value="MATH201">Mathematics 201</option>
+                                <option value="PHYS101">Physics 101</option>
+                                <option value="ENG102">English 102</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="lectureDate">Date:</label>
+                            <input type="date" id="lectureDate" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lectureTime">Time:</label>
+                            <input type="time" id="lectureTime" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Add Lecture
+                        </button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div>
+                            <h3>Student Management</h3>
+                        </div>
+                    </div>
+                    <div class="admin-actions">
+                        <button class="btn btn-primary" onclick="viewAllStudents()">
+                            <i class="fas fa-eye"></i> View All Students
+                        </button>
+                        <button class="btn btn-success" onclick="exportAttendance()">
+                            <i class="fas fa-download"></i> Export Attendance
+                        </button>
+                        <button class="btn btn-warning" onclick="generateReports()">
+                            <i class="fas fa-chart-bar"></i> Generate Reports
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+ 
+    <div id="notification" class="notification"></div>
+
+
+    <div class="modal fade" id="videoModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="videoModalTitle">Lecture Video</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="video-container">
+                        <video id="lectureVideo" controls autoplay width="100%">
+    <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+</video>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
