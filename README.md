@@ -35,8 +35,11 @@ ClassCast is a web-based system designed to automate lecture attendance tracking
 
 ## 📁 Project Structure
 ClassCast/
-├── index.html # Main HTML file
+├── index.html # Main HTML file   
+
 ├── styles.css # Custom styles
+
 ├── script.js # JavaScript functionality
+
 ├── README.md # This file
 
